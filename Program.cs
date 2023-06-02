@@ -1,131 +1,85 @@
-﻿/***********   LAB 02   ************/
-using System;
-using System.Text;
-/*
- * 1. A program that produces an array of all of the characters that appear more than once in a string.
- * For example, the string “Programmatic Python” would result in the array ['p','r','o','a','m','t']. 
- */
-Console.WriteLine("Instruction 1:");
-string stringInput = "Programmatic Python";
+﻿// See https://aka.ms/new-console-template for more information
 
-StringBuilder auxString = new StringBuilder("");
+// a.First prompt a user for an integer, n, the length of the array word list.
+// Create a int variable and get user input from the keyboard and store it in the variable
+using System.Text.RegularExpressions;
 
-if (stringInput.Trim().Length > 1)
+int n = 0;
+while (n <= 0)
+{   // validation
+    Console.WriteLine("Please enter an integer value greater than zero:");
+    n = Int32.Parse(Console.ReadLine());
+}
+
+// b.Then prompt the user for n words, one to fill each index in the array.
+Console.WriteLine("Please enter " + n + " words:");
+
+string[] wordsArray = new string[n]; // get console entered amount
+
+for (int i = 0; i < n; i++)
 {
-    Console.WriteLine($"Given string is: {stringInput} ");
-
-    stringInput = stringInput.ToLower();
-
-    for (int i = 0; i < stringInput.Length; i++)
+    Console.WriteLine($"Enter word # {i + 1}");
+    string newWord = Console.ReadLine();
+    if (newWord.Length > 0 && !newWord.Contains(' ') && Regex.IsMatch(newWord, @"^[a-zA-Z]+$"))
     {
-        for (int j = i + 1; j < stringInput.Length; j++)
+        wordsArray[i] = newWord;
+    }
+    else
+    {
+        Console.WriteLine("Sorry but you must enter at least one character.");
+        i--;
+    }
+}
+
+//c.Finally, the console should prompt the user to enter a single character to count.
+//This is most easily done with Console.ReadKey().KeyChar.
+
+char characterVal = ' '; // = Console.ReadKey().KeyChar;
+while (!Char.IsLetter(characterVal))
+{
+    Console.WriteLine("\nPlease enter a character to count:");
+    characterVal = Console.ReadKey().KeyChar;
+}
+
+Console.WriteLine($"\nYou entered the character '{characterVal}'"); // We use \n to go to the next line after reading the character value
+
+//d. The console should then print the number of occurrences of that character within all of the strings provided.
+// It should also inform the user if this number represents more than 25% of the total number of characters or not.
+//Hint: A string is an array of chars.
+// Get a count of how many times this character appears in all of the words
+int charCount = 0;
+int totalStringsChars = 0;
+foreach (string word in wordsArray)
+{
+    char[] chars = word.ToCharArray();
+    foreach (char c in chars)
+    {
+        if (Char.ToLower(c) == Char.ToLower(characterVal))
         {
-            if (stringInput.ElementAt(i) == stringInput.ElementAt(j) && !(stringInput.ElementAt(j) == ' '))
-            {
-                if (!auxString.ToString().Contains(stringInput.ElementAt(j)))
-                {
-                    auxString.Append(stringInput.ElementAt(j));
-                }
-            }
+            charCount++;
         }
+        totalStringsChars++;
     }
-    char[] resultToCharArray = auxString.ToString().ToCharArray();
-    Console.Write("['");
-    Console.Write(String.Join("','", resultToCharArray));
-    Console.WriteLine("']");
 }
-Console.WriteLine("-------------------");
 
-/*
- *2.  A program returns an array of strings that are unique words found in the argument.
-For example, the string “To be or not to be” returns ["to","be","or","not"].
- */
-Console.WriteLine("Instruction 2:");
-string stringInput2 = "To be or not to be that is the question";
-
-if (stringInput2.Trim().Length > 1)
+// Print the value of each variable, which will display the input values
+Console.WriteLine("The number is: " + n);
+Console.WriteLine("The " + n + " words are: ");
+for (int i = 0; i < n; i++)
 {
-    Console.WriteLine($"Given string is: {stringInput2} ");
-
-    stringInput2 = stringInput2.ToLower();
-    string[] tempString = stringInput2.Split(' ');
-    //Console.Write(String.Join(", ",tempString));
-    StringBuilder auxString2 = new StringBuilder("");
-
-    auxString2.AppendLine(tempString[0]); // to initialice with "to"
-
-    for (int i = 0; i < tempString.Length - 1; i++)
-    {
-        for (int j = i + 1; j < tempString.Length; j++)
-        {
-            if (!(tempString[i] == tempString[j]) && !(tempString[i] == " "))
-            {
-                if (!auxString2.ToString().Contains(tempString[j]))
-                {
-                    auxString2.AppendLine(tempString[j]);
-                }
-            }
-        }
-    }
-    String resultToCharArray2 = auxString2.ToString();
-    Console.Write("[\"");
-    // Console.Write(resultToCharArray2);
-    // Console.Write(String.Join("\", \"", resultToCharArray2.ReplaceLineEndings(", ")));
-    Console.Write(resultToCharArray2.Trim().ReplaceLineEndings("\", \""));
-    Console.WriteLine("\"]");
+    Console.WriteLine(wordsArray[i]);
 }
-Console.WriteLine("-------------------");
-/*
- * 3. A program that reverses a provided string 
- */
-Console.WriteLine("Instruction 3:");
-string stringInput3 = "Programming";
-StringBuilder auxString3 = new StringBuilder("");
 
-if (stringInput3.Trim().Length > 1)
+Console.WriteLine("The letter '" + characterVal + "' appears " + charCount + " times in the array.");
+double percentage = 100 * charCount / totalStringsChars;
+Console.WriteLine("Percentage is " + percentage);
+
+if (percentage > 25)
 {
-    Console.WriteLine($"Given string is: {stringInput3} ");
-
-    for (int i = stringInput3.Length - 1; i >= 0; i--)
-    {
-        auxString3.Append(stringInput3.ElementAt(i));
-    }
-    Console.WriteLine($"Reversed string is: {auxString3} ");
+    Console.WriteLine("This letter makes up more than 25% of the total number of characters.");
 }
-Console.WriteLine("-------------------");
-/* 
-4. A program that finds the longest unbroken word in a string and prints it
-For example, the string "Tiptoe through the tulips" would print "through"
-If there are multiple words tied for greatest length, print the last one
- */
-Console.WriteLine("Instruction 4:");
-string stringInput4 = "Tiptoe through the tulips";
-StringBuilder auxString4 = new StringBuilder("");
-int greatestLength = 0;
-
-if (stringInput4.Trim().Length > 1)
+else
 {
-    Console.WriteLine($"Given string is: {stringInput4} ");
-    string[] tempString4 = stringInput4.Split(' ');
-    // Console.Write(String.Join("','", tempString4));
-    for (int i = 0; i < tempString4.Length; i++)
-    {
-        if (tempString4[i].Length >= greatestLength)
-        {
-            greatestLength = tempString4[i].Length;
-            auxString4.Clear();
-            auxString4.Append(tempString4[i]);
-        }
-    }
-    Console.WriteLine($"The word with greatest length is: {auxString4} ");
+    Console.WriteLine("This letter does not make up more than 25% of the total number of characters.");
 }
-Console.WriteLine("-------------------");
-/*
- * Research and employ the StringBuilder class and explain its advantages or disadvantages over Strings.
- */
-Console.WriteLine("StringBuilder allows you to manipulate strings without declaring an initial length, " +
-    "which is useful when you do not know the length of the string that you want to work with. " +
-    "Working with StringBuilder allows you to save memory space since it mutable, " +
-    "contrary to string that is inmutable. A disadvantage is that StringBuilder" +
-    " can can not be used when manipulating multiple data at the same time");
-Console.WriteLine("-------------------");
+
