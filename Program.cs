@@ -1,129 +1,147 @@
-﻿/***********   LAB 02   ************/
-using System;
-using System.Text;
-/*
- * 1. A program that produces an array of all of the characters that appear more than once in a string.
- * For example, the string “Programmatic Python” would result in the array ['p','r','o','a','m','t']. 
- */
+﻿/************ LAB 03 **************/
+/*Lab - Complexity
+Create new methods to solve each of the following problems.
+
+1. We have a list of integers where elements appear either once or twice. 
+Find the elements that appeared twice in O(n) time.
+example: {1, 2, 3, 4, 7, 9, 2, 4} returns '{2, 4}
+The solution time complexity is: O3n or On
+*/
 Console.WriteLine("Instruction 1:");
-string stringInput = "Programmatic Python";
 
-StringBuilder auxString = new StringBuilder("");
+int[] input = { 1, 2, 3, 4, 7, 9, 2, 4 };
 
-if (stringInput.Trim().Length > 1)
+HashSet<int> uniqueValues = new HashSet<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+
+Dictionary<int, int> intCounter = new Dictionary<int, int>();
+
+// if the give input has content of integers
+if (input.Length > 0)
 {
-    Console.WriteLine($"Given string is: {stringInput} ");
+    Console.WriteLine("Given array is: ");
+    Console.WriteLine(string.Join(", ", input));
+    //Console.WriteLine(String.Join(", ", uniqueValues.ToArray()));
 
-    stringInput = stringInput.ToLower();
-
-    for (int i = 0; i < stringInput.Length; i++)
+    // first, we fill our dictionary with unique integers [0 -9];
+    foreach (int integer in uniqueValues)
     {
-        for (int j = i + 1; j < stringInput.Length; j++)
-        {
-            if (stringInput.ElementAt(i) == stringInput.ElementAt(j) && !(stringInput.ElementAt(j) == ' '))
-            {
-                if (!auxString.ToString().Contains(stringInput.ElementAt(j)))
-                {
-                    auxString.Append(stringInput.ElementAt(j));
-                }
-            }
-        }
+        intCounter.Add(integer, 0);
     }
-    char[] resultToCharArray = auxString.ToString().ToCharArray();
-    Console.Write("['");
-    Console.Write(String.Join("','", resultToCharArray));
-    Console.WriteLine("']");
+    // second, we fill our dictionary with the number of integers in the given array;
+    foreach (int integer in input)
+    {
+        intCounter[integer]++;
+    }
+    //  third, print the integer that appear twice;
+    Console.WriteLine("The result is:");
+    foreach (KeyValuePair<int, int> element in intCounter)
+    {
+        if (element.Value == 2)
+            Console.Write($"{element.Key}, ");
+    }
+
 }
+else
+{
+    Console.WriteLine("The input should be an array of integers");
+}
+
+Console.WriteLine();
 Console.WriteLine("-------------------");
 
 /*
- *2.  A program returns an array of strings that are unique words found in the argument.
-For example, the string “To be or not to be” returns ["to","be","or","not"].
- */
+2. We have two sorted int arrays which could be with different sizes. 
+We need to merge them in a third array while keeping this result array sorted. 
+Can you do that in O(n) time? 
+Don't use any extra structures like Sets or Dictionaries
+example: {{1, 2, 3, 4, 5}, {2, 5, 7, 9, 13}}
+returns {1, 2, 2, 3, 4, 5, 5, 7, 9, 13}
+*/
+
 Console.WriteLine("Instruction 2:");
-string stringInput2 = "To be or not to be";
 
-if (stringInput2.Trim().Length > 1)
+int[] intArray1 = new int[] { 1, 2, 3, 4, 5 };
+int[] intArray2 = new int[] { 2, 5, 7, 9, 13 };
+
+if (intArray1.Length <= 0 && intArray2.Length <= 0)
 {
-    Console.WriteLine($"Given string is: {stringInput2} ");
-
-    stringInput2 = stringInput2.ToLower();
-    string[] tempString = stringInput2.Split(' ');
-    //Console.Write(String.Join(", ",tempString));
-    StringBuilder auxString2 = new StringBuilder("");
-
-    for (int i = 0; i < tempString.Length; i++)
-    {
-        for (int j = i + 1; j < tempString.Length; j++)
-        {
-            if (tempString[i] != tempString[j] && !(tempString[i] == " "))
-            {
-                if (!auxString2.ToString().Contains(tempString[j]))
-                {
-                    auxString2.AppendLine(tempString[j]);
-                }
-            }
-        }
-    }
-    String resultToCharArray2 = auxString2.ToString();
-    Console.Write("[\"");
-    // Console.Write(resultToCharArray2);
-    // Console.Write(String.Join("\", \"", resultToCharArray2.ReplaceLineEndings(", ")));
-    Console.Write(resultToCharArray2.Trim().ReplaceLineEndings("\", \""));
-    Console.WriteLine("\"]");
+    throw new Exception("The input is not valid, please enter two arrays of integers");
 }
+
+Console.WriteLine("Given arrays are:");
+Console.WriteLine(string.Join(", ", intArray1));
+Console.WriteLine(string.Join(", ", intArray2));
+
+int[] intArray3 = new int[intArray1.Length + intArray2.Length];
+int index1 = 0;
+int index2 = 0;
+int index3 = 0;
+// Compare and assign the values of each array into the new array
+// until the lower array length is reached
+while (index1 < intArray1.Length && index2 < intArray2.Length)
+{
+    if (intArray1[index1] < intArray2[index2])
+    {
+        intArray3[index3] = intArray1[index1];
+        index1++;
+        index3++;
+    }
+    else if (intArray1[index1] >= intArray2[index2])
+    {
+        intArray3[index3] = intArray2[index2];
+        index2++;
+        index3++;
+    }
+}
+
+//Console.WriteLine("First while");
+// If the length of this array is higher than the other array(intArray1.Length > intArray2.Length),
+// so save the rest of its values in the new array
+while (index1 < intArray1.Length)
+{
+    intArray3[index3] = intArray1[index1];
+    index1++;
+    index3++;
+}
+//Console.WriteLine("Second while");
+// If the length of this array is higher than the other array(intArray2.Length > intArray1.Length),
+// so save the rest of its values in the new array
+while (index2 < intArray2.Length)
+{
+    intArray3[index3] = intArray2[index2];
+    index2++;
+    index3++;
+}
+//Console.WriteLine("Third while");
+Console.WriteLine("The result is: ");
+Console.Write(string.Join(", ", intArray3));
+//Console.Write("} ");
+
+Console.WriteLine();
+Console.WriteLine("This solution has a time complexity of O3n or O(n)");
 Console.WriteLine("-------------------");
 /*
- * 3. A program that reverses a provided string 
+3. Given an integer, reverse the digits of that integer, 
+e. g. input is 3415, output is 5143. 
+What is the time complexity of your solution?
  */
 Console.WriteLine("Instruction 3:");
-string stringInput3 = "Programming";
-StringBuilder auxString3 = new StringBuilder("");
-
-if (stringInput3.Trim().Length > 1)
+int input3 = 3415;
+if (input3 <= 0)
 {
-    Console.WriteLine($"Given string is: {stringInput3} ");
-
-    for (int i = stringInput3.Length - 1; i >= 0; i--)
-    {
-        auxString3.Append(stringInput3.ElementAt(i));
-    }
-    Console.WriteLine($"Reversed string is: {auxString3} ");
+    throw new Exception("The input is not an valid integer");
 }
-Console.WriteLine("-------------------");
-/* 
-4. A program that finds the longest unbroken word in a string and prints it
-For example, the string "Tiptoe through the tulips" would print "through"
-If there are multiple words tied for greatest length, print the last one
- */
-Console.WriteLine("Instruction 4:");
-string stringInput4 = "Tiptoe through the tulips";
-StringBuilder auxString4 = new StringBuilder("");
-int greatestLength = 0;
 
-if (stringInput4.Trim().Length > 1)
+Console.WriteLine("Given input is: ");
+Console.WriteLine($"{input3}");
+// convert integer into an array of chars
+char[] temp3 = input3.ToString().ToCharArray();
+Console.WriteLine("The result is: ");
+for (int i = temp3.Length - 1; i >= 0; i--)
 {
-    Console.WriteLine($"Given string is: {stringInput4} ");
-    string[] tempString4 = stringInput4.Split(' ');
-    // Console.Write(String.Join("','", tempString4));
-    for (int i = 0; i < tempString4.Length; i++)
-    {
-        if (tempString4[i].Length >= greatestLength)
-        {
-            greatestLength = tempString4[i].Length;
-            auxString4.Clear();
-            auxString4.Append(tempString4[i]);
-        }
-    }
-    Console.WriteLine($"The word with greatest length is: {auxString4} ");
+    //printing each value reversed
+    Console.Write(temp3[i]);
 }
-Console.WriteLine("-------------------"); 
-/*
- * Research and employ the StringBuilder class and explain its advantages or disadvantages over Strings.
- */
-Console.WriteLine("StringBuilder allows you to manipulate strings without declaring an initial length, " +
-    "which is useful when you do not know the length of the string that you want to work with. " +
-    "Working with StringBuilder allows you to save memory space since it mutable, " +
-    "contrary to string that is inmutable. A disadvantage is that StringBuilder" +
-    " can can not be used when manipulating multiple data at the same time");
+Console.WriteLine("");
+Console.WriteLine("The time complexity is On");
 Console.WriteLine("-------------------");
