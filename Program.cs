@@ -1,112 +1,181 @@
-﻿/************ LAB 4 - LISTS **********/
-/*
- * 1. List<int> MaxNumbersInLists(List<List<int>>) 
- * accepts as a parameter a List of Lists of Integers. 
- * It returns a new list with each element representing 
- * the maximum number found in the corresponding original list. 
- * For example, { {1, 5, 3}, {9, 7, 3, -2}, {2, 1, 2} } returns {5, 9, 2}. 
- * Output the results with a message like: “List 1 has a maximum of 5. 
- * List 2 has a maximum of 9. List 3 has a maximum of 2.”
- */
-using System.Collections.Generic;
+﻿/************ LAB 05 - Stacks, Queues *******************
+* Using Stacks and Queues where appropriate, create a simple command line playlist app 
+* that allows a user to add a song to a playlist. Provide commands to play the next song, 
+* skip the upcoming song, or add a new song to the playlist. 
+* Users should be able to rewind by one song many times to play a previous track.
+* Example user experience:
+* 
+* Choose an option:
+* 1. Add a song to your playlist
+* 2. Play the next song in your playlist
+* 3. Skip the next song
+* 4. Rewind one song
+* 5. Exit
+* 
+* > 1
+*/
+using System;
+using System.IO;
+using System.Diagnostics.Metrics;
+using static System.Net.Mime.MediaTypeNames;
+using System.Numerics;
 
-Console.WriteLine("Instruction 1:");
+Console.WriteLine("Instructions 1");
+Console.WriteLine();
 
-List<List<int>> input = new List<List<int>> { new List<int>() { 1, 5, 3 }, new List<int>() { 9, 7, 3, -2 }, new List<int>() { 2, 1, 2 } };
+Queue<string> playList = new Queue<string>();
+// initializing queque with 3 songs
+//playList.Enqueue("A Sky Full of Stars");
+//playList.Enqueue("Hymn for the Weekend");
+//playList.Enqueue("Viva la Vida");
 
-// Create the method to get the highest values of each subList
-static List<int> maxNumbersInLists(List<List<int>> list)
+Queue<string> tempPlayList = new Queue<string>();
+Stack<string> tempStackPlayList = new Stack<string>(); // for rewind
+string temp = ""; // temporal variable to save previous song
+tempPlayList = playList; // copy values and work with tempPlayList
+// function for 1. Add a song to your playlist
+void addASong(string songName)
 {
-    List<int> listTemp = new List<int>();
-    foreach (List<int> collection in list)
+    if (playList.Count == 0)
     {
-        if (collection.Count > 0)
-        {
-            listTemp.Add(collection.Max());
-        }
+        temp = songName;
     }
-    return listTemp;
-}
+    else
+    {
+        temp = tempStackPlayList.Peek();
+    }
 
-// Validate length of List
-if (input.Count() <= 0)
-{
-    throw new Exception("The datatype of the inner list has to be integers");
-}
+    playList.Enqueue(songName); // create a queque
+    tempStackPlayList.Push(songName); // create a stack , for knowing next song
+    tempPlayList = playList;
 
-List<int> finalList = maxNumbersInLists(input);
-// Printing the final results
-foreach (int item in finalList)
-{
-    Console.Write($"List {finalList.IndexOf(item) + 1} has a maximum of ");
-    Console.Write($"{item}.");
+    // Console.Write($"length in playList {playList.Count}, "); ////////
+    // Console.Write($"length in TEMPplayList {tempStackPlayList.Count}, "); /////
+
     Console.WriteLine();
+    Console.WriteLine($"\"{songName}\" added to your playlist.");
+    Console.WriteLine($"Next song \"{temp}\"");
 }
 
-Console.WriteLine("The time complexity of this solution is O2n or O(n)");
-Console.WriteLine("-------------------");
-Console.WriteLine();
-
-/*
- * 2. String HighestGrade(List<List<int>>) 
- * accepts a list of number grades among students in different courses 
- * (where each list represents a single course), between 0 and 100. 
- * It returns the highest grade among all students in all courses.
- * For example: { {85,92, 67, 94, 94}, {50, 60, 57, 95}, {95} } 
- * returns "The highest grade is 95. 
- * This grade was found in class(es) {index}".
- */
-Console.WriteLine("Instruction 2:");
-
-List<List<int>> grades = new List<List<int>> { new List<int>() { 85, 92, 67, 94, 94 }, new List<int>() { 50, 60, 57, 95 }, new List<int>() { 95 } };
-
-// validate list of grades
-if (grades.Count() <= 0)
+// function for option 2
+void playNextSong()
 {
-    throw new Exception("The datatype of the inner list has to be integers");
-}
-
-List<int> highestGrades = maxNumbersInLists(grades);
-
-Console.WriteLine($"The highest grade is {highestGrades.Max()}");
-Console.WriteLine($"This grade was found in grade {highestGrades.IndexOf(highestGrades.Max()) + 1}");
-Console.WriteLine("The time complexity of this solution is O1n or O(n)");
-Console.WriteLine();
-Console.WriteLine("-------------------");
-Console.WriteLine();
-
-/*
- * 3. List<int> OrderByLooping (List<int>) orders a list of integers, 
- * from least to greatest, using only basic control statements (ie. if/else, for/while).
- * For example, argument {6, -2, 5, 3} returns {-2, 3, 5, 6}.
- */
-Console.WriteLine("Instruction 3:");
-
-List<int> input3 = new List<int>() { 6, -2, 5, 3 };
-static List<int> orderByLooping(List<int> list)
-{
-    int intTemp = 0;
-    /* SortedList<int, int> numberNames = new SortedList<int, int>(); */
-    for (int i = 0; i < list.Count(); i++)
+    if (playList.Count > 0)
     {
-        for (int j = 0; j < list.Count(); j++)
+        if (tempPlayList.Count == 0)
         {
-            if (list[i] < list[j])
-            {
-                intTemp = list[i];
-                list[i] = list[j];
-                list[j] = intTemp;
-            }
+            tempPlayList = playList;
         }
+        Console.WriteLine($"Now playing \"{tempPlayList.Dequeue()}\"");
+        Console.WriteLine($"Next song \"{tempPlayList.Peek()}\"");
     }
-    return list;
+    else
+    {
+        Console.WriteLine("The playList is empty and/or need to add more songs to perform this operation");
+    }
 }
-if (input3.Count() <= 0)
+
+// function for 3.Skip the next song
+void skipNextSong()
 {
-    throw new Exception("The datatype of the inner list has to be integers");
+    if (playList.Count > 2)
+    {
+        if (tempPlayList.Count == 0)
+        {
+            tempPlayList = playList;
+        }
+        Console.WriteLine($"Now Playing \"{tempPlayList.Dequeue()}\""); // song1
+        tempPlayList.Dequeue();// song 2, skip thi song
+        Console.WriteLine($"Next Song: \"{tempPlayList.Peek()}\""); // song 3
+    }
+    else
+    {
+        Console.WriteLine("The playList is empty and/or need to add more songs to perform this operation");
+    }
 }
-List<int> orderedList = orderByLooping(input3);
-Console.WriteLine(string.Join(", ", orderedList));
-Console.WriteLine("The time complexity of this solution is On2 or O(n)2");
-Console.WriteLine();
-Console.WriteLine("-------------------");
+// function for  4. Rewind one song
+void rewindOneSong()
+{
+    if (playList.Count > 1)
+    {
+        if (tempPlayList.Count == 0)
+        {
+            tempPlayList = playList;
+        }
+        //tempPlayList.Reverse();
+        tempStackPlayList.Clear();
+        while (!(tempPlayList.Count == 0))
+        { tempStackPlayList.Push(tempPlayList.Dequeue()); }
+
+        Console.WriteLine($"Now Playing \"{tempStackPlayList.Pop()}\""); // song1
+        Console.WriteLine($"Next Song: \"{tempStackPlayList.Peek()}\""); // song 3
+    }
+    else
+    {
+        Console.WriteLine("The playList is empty and/or need to add more songs to perform this operation");
+    }
+}
+
+// Show the options
+bool exit = false;
+while (!exit)
+{   // Showing the list of options and validating the selected option with switch
+    Console.WriteLine("Choose an option:");
+    Console.WriteLine("1. Add a song to your playlist");
+    Console.WriteLine("2. Play the next song in your playlist");
+    Console.WriteLine("3. Skip the next song");
+    Console.WriteLine("4. Rewind one song");
+    Console.WriteLine("5. Exit");
+    Console.WriteLine();
+    Console.Write("Write the number of your option >  ");
+
+    string choosedOption = Console.ReadLine();
+    Console.WriteLine();
+    switch (choosedOption)
+    {
+        case "1":
+            {
+                Console.WriteLine("1. Add a song");
+                Console.Write("Enter Song Name: > ");
+                string tempName = Console.ReadLine();
+                addASong(tempName);
+                Console.WriteLine();
+                //Console.ReadLine();
+                break;
+            }
+        case "2":
+            {
+                Console.WriteLine("2. Playing next song");
+                playNextSong();
+                Console.WriteLine();
+                break;
+            }
+        case "3":
+            {
+                Console.WriteLine("3. Skip the next song");
+                skipNextSong();
+                Console.WriteLine();
+                break;
+            }
+        case "4":
+            {
+                Console.WriteLine("4. Rewind one song");
+                rewindOneSong();
+                Console.WriteLine();
+                break;
+            }
+        case "5":
+            {
+                Console.WriteLine("5. Exit");
+                exit = true;
+                break;
+            }
+        default:
+            {
+                Console.WriteLine("Type a valid integer (1, 2, 3, 4, 5) for your option");
+                Console.WriteLine();
+                break;
+            }
+    }
+
+}
